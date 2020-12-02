@@ -78,8 +78,6 @@ fn main() {
     let mut valid_count2: u16 = 0;
 
     for password in passwords {
-        println!("{}", password.min);
-        
         if password.is_valid() {
             valid_count += 1;
         }
