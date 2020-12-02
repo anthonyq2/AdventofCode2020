@@ -5,13 +5,13 @@ use std::{
 
 struct PasswordRule {
     character: char,
-    min: u8,
-    max: u8,
+    min: usize,
+    max: usize,
     password: String
 }
 
 impl PasswordRule {
-    fn count_recurring_char(&self) -> u8 {
+    fn count_recurring_char(&self) -> usize {
         let mut count = 0;
         for c in self.password.chars() {
             if c == self.character {
@@ -21,9 +21,18 @@ impl PasswordRule {
         count
     }
 
+    // Validate using the fist (wrong) password rule
     fn is_valid(&self) -> bool {
         let count = self.count_recurring_char();
         count >= self.min && count <= self.max
+    }
+
+    // Validate using the second rule
+    fn is_valid2(&self) -> bool {
+        (self.password.chars().nth(self.min - 1).unwrap() == self.character
+        && self.password.chars().nth(self.max - 1).unwrap() != self.character)
+        || (self.password.chars().nth(self.min - 1).unwrap() != self.character 
+        && self.password.chars().nth(self.max - 1).unwrap() == self.character)
     }
 }
 
@@ -66,13 +75,20 @@ fn main() {
     password_rules_from_file(String::from("input.txt"), &mut passwords);
     
     let mut valid_count: u16 = 0;
+    let mut valid_count2: u16 = 0;
+
     for password in passwords {
-        println!("{}", password.password);
+        println!("{}", password.min);
         
         if password.is_valid() {
             valid_count += 1;
         }
+
+        if password.is_valid2() {
+            valid_count2 += 1;
+        }
     }
 
-    println!("{} passwords are valid", valid_count);
+    println!("{} passwords are valid using the old rules", valid_count);
+    println!("{} passwords are valid with the new rules!", valid_count2);
 }
